@@ -117,7 +117,7 @@ R(read)의 경우, slave interface 를 통해 외부에서 해당 register 의 �
 쓰여진 값은 무시되며, read 된 값은 의미가 없음을 나타낸다.
 ✓ Default value 는 reset 이 되었을 때 초기 값을 의미한다.
 ✓ Table 4 에서 모든 register 의 default value 는 0x00000000 이다.
-
+![33](https://github.com/hbeooooooom/Systems_based_on_ALU-_with_Multiplier/blob/main/readmemdpng/33.png)
 ![6](https://github.com/hbeooooooom/Systems_based_on_ALU-_with_Multiplier/blob/main/readmemdpng/6.png)
 
 
