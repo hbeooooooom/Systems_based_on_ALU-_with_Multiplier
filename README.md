@@ -22,34 +22,41 @@ opcode[3:0] register 에 opcode 값을 저장한다. 자세한 opcode 는 3.4 �
 3. Testbench 가 opdone 를 읽어 연산 진행 상황을 파악한다. 연산이 종료될 때까지 매 사이클
 opdone 을 읽는다. opdone 이외의 register 은 ALU with Multiplier 의 동작이 완료될 때까지
 접근하지 않는다.
+
 ✓ opdone[1:0] == 2’b00: 연산 대기
 ✓ opdone[1:0] == 2’b10: 연산 시작
 ✓ opdone[1:0] == 2’b11: 연산 완료
 ✓ opdone[31:2]: don’t care
-4. ALU with Multiplier 는 opstart[0]가 1 이 되면 연산을 수행한다. 연산을 시작할 때 다음과
+
+5. ALU with Multiplier 는 opstart[0]가 1 이 되면 연산을 수행한다. 연산을 시작할 때 다음과
 같은 동작이 동시에 수행된다.
 ✓ opcode[3:0]에 저장된 opcode 에 맞춰 operandA 혹은 operandA 와 operandB register 에
 저장된 값을 이용해 ALU with Multiplier 내의 ALU 혹은 multiplier 를 이용해 연산을
 수행한다.
+
 ✓ 연산을 진행하는 상태를 나타내기 위하여 opdone[1]에 1 을 쓴다.
+
 ✓ opstart 를 0 으로 초기화 한다.
-5. ALU with Multiplier 는 연산이 완료될 때 다음과 같은 동작을 동시에 수행한다.
+
+6. ALU with Multiplier 는 연산이 완료될 때 다음과 같은 동작을 동시에 수행한다.
+
 ✓ 곱셈 이외의 연산 결과는 result1 에 저장하며 곱셈 연산 결과는 result1(하위 32bit)와
 result2(상위 32bit) register 에 저장한다.
+
 ✓ opdone[0]에 1 을 쓴다.
-6. Testbench 는 연산이 종료될 때 (opdone[1:0]==2’b11)일 때 앞서 opcode 에 저장한 연산에
+8. Testbench 는 연산이 종료될 때 (opdone[1:0]==2’b11)일 때 앞서 opcode 에 저장한 연산에
 맞춰 ALU with Multiplier 의 result1 혹은 result1 와 result2 값을 읽는다.
 ✓ Testbench 가 bus 를 통해 읽을 수 있는 값은 32 bits 이므로 result1 과 result2 를 읽을
 경우 2 회에 걸쳐 register 를 접근하여 값을 읽어 온다.
-7. Testbench 가 result register 의 값을 읽은 후 다음 연산을 수행할 수 있도록 ALU with
+9. Testbench 가 result register 의 값을 읽은 후 다음 연산을 수행할 수 있도록 ALU with
 Multiplier 를 초기화 한다. Testbench 는 아래 방법 중 한 방법을 선택해 초기화 동작을
 수행한다.
 ✓ Testbench 가 ALU with Multiplier 의 opdone register 를 0 으로 초기화 한다.
 ✓ Testbench 가 ALU with Multiplier 의 opclear[0]에 1 을 써 ALU with Multiplier 내의 모든
 register 값을 초기화 한다.
-8. Testbench 는 6 번 과정을 통해 읽은 계산 결과를 Memory 에 값을 쓴다. 주소는
+10. Testbench 는 6 번 과정을 통해 읽은 계산 결과를 Memory 에 값을 쓴다. 주소는
 Testbench 가 임의의 주소를 지정한다.
-9. 1 에서 8 번까지의 과정을 필요에 따라 반복한다.
+11. 1 에서 8 번까지의 과정을 필요에 따라 반복한다.
 Testbench 는 ALU with Multiplier 초기화 동작(7 번)과 Memory 에 값 쓰기(8 번)동작의 순서를
 바꿔서 동작 할 수 있다.
 
