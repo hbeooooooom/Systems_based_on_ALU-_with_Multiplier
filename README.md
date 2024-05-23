@@ -24,8 +24,11 @@ opdone 을 읽는다. opdone 이외의 register 은 ALU with Multiplier 의 동�
 접근하지 않는다.
 
 ✓ opdone[1:0] == 2’b00: 연산 대기
+
 ✓ opdone[1:0] == 2’b10: 연산 시작
+
 ✓ opdone[1:0] == 2’b11: 연산 완료
+
 ✓ opdone[31:2]: don’t care
 
 5. ALU with Multiplier 는 opstart[0]가 1 이 되면 연산을 수행한다. 연산을 시작할 때 다음과
@@ -44,19 +47,26 @@ opdone 을 읽는다. opdone 이외의 register 은 ALU with Multiplier 의 동�
 result2(상위 32bit) register 에 저장한다.
 
 ✓ opdone[0]에 1 을 쓴다.
+
 8. Testbench 는 연산이 종료될 때 (opdone[1:0]==2’b11)일 때 앞서 opcode 에 저장한 연산에
 맞춰 ALU with Multiplier 의 result1 혹은 result1 와 result2 값을 읽는다.
+
 ✓ Testbench 가 bus 를 통해 읽을 수 있는 값은 32 bits 이므로 result1 과 result2 를 읽을
 경우 2 회에 걸쳐 register 를 접근하여 값을 읽어 온다.
-9. Testbench 가 result register 의 값을 읽은 후 다음 연산을 수행할 수 있도록 ALU with
+
+10. Testbench 가 result register 의 값을 읽은 후 다음 연산을 수행할 수 있도록 ALU with
 Multiplier 를 초기화 한다. Testbench 는 아래 방법 중 한 방법을 선택해 초기화 동작을
 수행한다.
+
 ✓ Testbench 가 ALU with Multiplier 의 opdone register 를 0 으로 초기화 한다.
+
 ✓ Testbench 가 ALU with Multiplier 의 opclear[0]에 1 을 써 ALU with Multiplier 내의 모든
 register 값을 초기화 한다.
-10. Testbench 는 6 번 과정을 통해 읽은 계산 결과를 Memory 에 값을 쓴다. 주소는
+
+12. Testbench 는 6 번 과정을 통해 읽은 계산 결과를 Memory 에 값을 쓴다. 주소는
 Testbench 가 임의의 주소를 지정한다.
-11. 1 에서 8 번까지의 과정을 필요에 따라 반복한다.
+
+14. 1 에서 8 번까지의 과정을 필요에 따라 반복한다.
 Testbench 는 ALU with Multiplier 초기화 동작(7 번)과 Memory 에 값 쓰기(8 번)동작의 순서를
 바꿔서 동작 할 수 있다.
 
@@ -90,9 +100,13 @@ bits 연산 결과를 result1 에 저장한다.
 64 bits 로 result1 register 에 결과의 하위 32 bits 를 저장하며 result2 register 에 결과의 상위
 32 bits 결과를 저장한다.
 산술 연산은 operator (예: 곱셈: *, 덧셈 +)로 구현하면 안 된다.
+
 ✓ 덧셈 및 뺄셈은 CLA(carry look-ahead adder)를 이용한다.
+
 ✓ 덧셈 및 뺄셈은 한 개의 CLA 를 사용한다.
+
 ✓ 곱셈은 booth multiplier 를 이용한다.
+
 opstart[0]가 1 일 경우 register 에 저장된 값을 이용해 연산을 시작한다.
 연산을 시작할 때 opdone[1]에 1 을 쓰며 동시에 opstart 를 0 으로 초기화 한다.
 연산이 끝날 경우 opdone[0]에 1 을 쓰고 대기한다.
@@ -115,14 +129,22 @@ Port 의 이름과 bit width 는 반드시 동일해야 한다.
 3.3. Register description
 Table 4 는 ALU with Multiplier 내부의 register 를 설명한 것이다. Register 의 bit width 는
 기본적으로 32 bits 이다.
+
 ✓ Register type 은 W(write)와 R(read)로 구별된다.
+
 W(write)의 경우, slave interface 를 통해 외부에서 해당 register 에 값을 write 할 수 있다.
+
 R(read)의 경우, slave interface 를 통해 외부에서 해당 register 의 값을 read 할 수 있다.
+
  Testbench 는 W type register 을 읽지 않으며 R type register 에 값을 쓰지 않는다.
+
 ✓ Register 에서 사용되지 않는 bit 는 reserved 이다.
+
 예를 들어 ‘opstart[31:1]가 reserved 이다’의 의미는 opstart register 의 [31:1] bits 에
 쓰여진 값은 무시되며, read 된 값은 의미가 없음을 나타낸다.
+
 ✓ Default value 는 reset 이 되었을 때 초기 값을 의미한다.
+
 ✓ Table 4 에서 모든 register 의 default value 는 0x00000000 이다.
 
 ![33](https://github.com/hbeooooooom/Systems_based_on_ALU-_with_Multiplier/blob/main/readmemdpng/33.png)
@@ -132,17 +154,25 @@ R(read)의 경우, slave interface 를 통해 외부에서 해당 register 의 �
 3.4. Opcode description
 Table 5 는 ALU with Multiplier 의 opcode 를 나타낸 표이다. ALU with Multiplier 는 총
 14 가지의 연산을 수행할 수 있다.
+
 ✓ Opcode 가 0xE, 0xF 가 되는 경우는 없다 가정한다.
+
 Opcode 는 수행할 연산을 나타내는 값으로 opcode register 에 저장되어 있다.
+
 ✓ Opcode 의 bit width 는 4 bits 이다.
+
 ✓ Set less than 명령과 set greater than 명령은 부호가 없는 operand A 와 B 를 비교한
 결과를 result1 register 에 저장한다. 각 연산의 결과는 아래와 같다.
+
  Set less than 명령은 operand A 와 B 를 비교하여 A 가 더 작을 경우 result 를 1 을
 출력한다. Operand A 와 operand B 가 같을 경우 결과는 0 이다.
+
  Set greater than 명령은 operand A 와 B 를 비교하여 A 가 더 클 경우 result 를 1 을
 출력한다. Operand A 와 operand B 가 같을 경우 결과는 0 이다.
+
 ✓ Shift 연산 (LSL, LSR, ASR)의 경우 shift amount 는 1 로 고정하며 operandB register
 값을 이용해 연산한다.
+
  예를 들어 operandB register 값이 0x10 이며 LSL 연산을 수행할 경우 결과는
 0x20 이다.
 ![7](https://github.com/hbeooooooom/Systems_based_on_ALU-_with_Multiplier/blob/main/readmemdpng/7.png)
@@ -164,6 +194,7 @@ ALU with Multiplier 의 slave interface 는 S_addr 를 이용해 offset 을 계�
 이용해 register 에 S_din 데이터를 write 하거나 register 값을 S_dout write (master 입장에선
 read)한다. s_wr 가 0 일 경우 register read 를, s_wr 가 1 일 경우 register write 을 동작한다.
 ALU with Multiplier 의 opstart register 에 값이 1 이 써질 경우 동작 순서는 다음과 같다
+
 1. opstart 의 값을 0 으로 바꾸며 opdone[1]에 1 을 쓴다.
 2. opcode 에 저장된 값을 읽어 연산에 맞는 operand 의 값을 읽는다.
 opcode 의 값이 13 를 넘어가는 경우(0xE 혹은 0xF 일 경우)는 없다 가정한다.
